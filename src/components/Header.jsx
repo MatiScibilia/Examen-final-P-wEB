@@ -1,4 +1,6 @@
-function Header({ title, onMenuClick }) {
+function Header({ title, showBack, onMenuClick, onBack }) {
+  const barStyle = { width: '22px', height: '2px', background: '#333', borderRadius: '2px' }
+
   return (
     <header
       style={{
@@ -11,7 +13,8 @@ function Header({ title, onMenuClick }) {
       }}
     >
       <button
-        onClick={onMenuClick}
+        onClick={showBack ? onBack : onMenuClick}
+        aria-label={showBack ? 'Volver' : 'Abrir menú'}
         style={{
           border: 'none',
           background: 'transparent',
@@ -22,9 +25,26 @@ function Header({ title, onMenuClick }) {
           gap: '4px',
         }}
       >
-        <span style={{ width: '22px', height: '2px', background: '#333', borderRadius: '2px' }} />
-        <span style={{ width: '22px', height: '2px', background: '#333', borderRadius: '2px' }} />
-        <span style={{ width: '22px', height: '2px', background: '#333', borderRadius: '2px' }} />
+        {showBack ? (
+          <svg
+            width="22"
+            height="22"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="#333"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <polyline points="15 18 9 12 15 6" />
+          </svg>
+        ) : (
+          <>
+            <span style={barStyle} />
+            <span style={barStyle} />
+            <span style={barStyle} />
+          </>
+        )}
       </button>
       <h2 style={{ margin: 0, fontSize: '18px' }}>{title}</h2>
     </header>

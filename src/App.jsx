@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Routes, Route, useLocation } from 'react-router-dom'
+import { Routes, Route, useLocation, useNavigate } from 'react-router-dom'
 import Header from './components/Header'
 import Sidebar from './components/Sidebar'
 import PrivateRoute from './components/PrivateRoute'
@@ -11,6 +11,7 @@ import Login from './pages/Login'
 import ProjectDetail from './pages/ProjectDetail'
 import EpicDetail from './pages/EpicDetail'
 import StoryDetail from './pages/StoryDetail'
+import { mockProjects, mockEpics, mockStories } from './services/mocks'
 
 const titles = {
   '/': 'Home',
@@ -20,11 +21,28 @@ const titles = {
   '/settings': 'Settings',
 }
 
+function getDetailTitle(pathname) {
+  const [, projectId, epicId, storyId] = pathname.split('/').filter(Boolean)
+
+  const project = mockProjects.find((p) => p._id === projectId)
+  const epic = mockEpics.find((e) => e._id === epicId)
+  const story = mockStories.find((s) => s._id === storyId)
+
+  if (storyId) return story ? story.name : 'Story'
+  if (epicId) return project && epic ? `${project.name} > ${epic.name}` : 'Épica'
+  return project ? project.name : 'Proyecto'
+}
+
 function App() {
   const [menuOpen, setMenuOpen] = useState(false)
   const location = useLocation()
-  const title = titles[location.pathname] || 'App'
+  const navigate = useNavigate()
+
   const isLoginPage = location.pathname === '/login'
+  const isDetailPage = location.pathname.startsWith('/my-projects/')
+  const title = isDetailPage
+    ? getDetailTitle(location.pathname)
+    : titles[location.pathname] || 'App'
 
   if (isLoginPage) {
     return (
@@ -36,7 +54,12 @@ function App() {
 
   return (
     <>
-      <Header title={title} onMenuClick={() => setMenuOpen(!menuOpen)} />
+      <Header
+        title={title}
+        showBack={isDetailPage}
+        onMenuClick={() => setMenuOpen(!menuOpen)}
+        onBack={() => navigate(-1)}
+      />
       <Sidebar isOpen={menuOpen} onClose={() => setMenuOpen(false)} />
 
       <main style={{ padding: '16px' }}>
@@ -50,9 +73,9 @@ function App() {
           <Route path="/my-stories" element={<PrivateRoute><MyStories /></PrivateRoute>} />
           <Route path="/settings" element={<PrivateRoute><Settings /></PrivateRoute>} />
         </Routes>
-      </main>
+      </main> 
     </>
   )
 }
 
-export default App  
+export default App
