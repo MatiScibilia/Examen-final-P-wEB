@@ -1,0 +1,125 @@
+import { useState } from 'react'
+import { useParams, useNavigate } from 'react-router-dom'
+import Card from '../components/Card'
+import Modal from '../components/Modal'
+import { mockProjects, mockEpics, mockStories } from '../services/mocks'
+
+function ProjectDetail() {
+  const { projectId } = useParams()
+  const navigate = useNavigate()
+
+  const [project, setProject] = useState(mockProjects.find((p) => p._id === projectId))
+  const [epics, setEpics] = useState(mockEpics.filter((e) => e.project === projectId))
+
+  const [editModalOpen, setEditModalOpen] = useState(false)
+  const [name, setName] = useState(project ? project.name : '')
+  const [description, setDescription] = useState(project ? project.description : '')
+
+  const [createModalOpen, setCreateModalOpen] = useState(false)
+  const [epicName, setEpicName] = useState('')
+  const [epicDescription, setEpicDescription] = useState('')
+
+  if (!project) {
+    return <p>Proyecto no encontrado.</p>
+  }
+
+  const handleEdit = (e) => {
+    e.preventDefault()
+    setProject({ ...project, name, description })
+    setEditModalOpen(false)
+  }
+
+  const openEditModal = () => {
+    setName(project.name)
+    setDescription(project.description)
+    setEditModalOpen(true)
+  }
+
+  const handleCreateEpic = (e) => {
+    e.preventDefault()
+    const newEpic = { _id: String(Date.now()), project: projectId, name: epicName, description: epicDescription, icon: '⭐' }
+    setEpics([...epics, newEpic])
+    setEpicName('')
+    setEpicDescription('')
+    setCreateModalOpen(false)
+  }
+
+  const handleDeleteEpic = (epic) => {
+    const hasStories = mockStories.some((s) => s.epic === epic._id)
+    if (hasStories) {
+      alert('No se puede eliminar una épica que tiene stories.')
+      return
+    }
+    const confirmed = window.confirm(`¿Seguro que querés eliminar "${epic.name}"?`)
+    if (!confirmed) return
+    setEpics(epics.filter((e) => e._id !== epic._id))
+  }
+
+  const inputStyle = { width: '100%', padding: '8px 10px', borderRadius: '6px', border: '1px solid #ddd', boxSizing: 'border-box' }
+  const labelStyle = { display: 'block', marginBottom: '4px', fontSize: '14px', color: '#555' }
+  const buttonStyle = { background: '#4f46e5', color: 'white', border: 'none', borderRadius: '8px', padding: '10px 18px', fontWeight: 'bold', cursor: 'pointer' }
+  const secondaryButtonStyle = { background: 'white', color: '#4f46e5', border: '1px solid #4f46e5', borderRadius: '8px', padding: '10px 18px', fontWeight: 'bold', cursor: 'pointer' }
+
+  return (
+    <div style={{ fontFamily: '"Segoe UI", Roboto, Helvetica, Arial, sans-serif' }}>
+      <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+        <h1 style={{ margin: 0, fontSize: '26px' }}>{project.name}</h1>
+        <p style={{ margin: '6px 0 16px', color: '#777', maxWidth: '500px', marginLeft: 'auto', marginRight: 'auto' }}>
+          {project.description}
+        </p>
+        <div style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
+          <button onClick={openEditModal} style={secondaryButtonStyle}>Editar proyecto</button>
+          <button onClick={() => setCreateModalOpen(true)} style={buttonStyle}>+ Nueva épica</button>
+        </div>
+      </div>
+
+      {epics.length === 0 ? (
+        <p style={{ color: '#777', textAlign: 'center' }}>Este proyecto no tiene épicas.</p>
+      ) : (
+        <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+          {epics.map((epic) => (
+            <li key={epic._id}>
+              <Card
+                icon={epic.icon}
+                title={epic.name}
+                description={epic.description}
+                onClick={() => navigate(`/my-projects/${projectId}/${epic._id}`)}
+                onDelete={() => handleDeleteEpic(epic)}
+              />
+            </li>
+          ))}
+        </ul>
+      )}
+
+      <Modal isOpen={editModalOpen} onClose={() => setEditModalOpen(false)} title="Editar proyecto">
+        <form onSubmit={handleEdit}>
+          <div style={{ marginBottom: '12px' }}>
+            <label htmlFor="project-edit-name" style={labelStyle}>Nombre</label>
+            <input id="project-edit-name" type="text" value={name} onChange={(e) => setName(e.target.value)} required style={inputStyle} />
+          </div>
+          <div style={{ marginBottom: '16px' }}>
+            <label htmlFor="project-edit-description" style={labelStyle}>Descripción</label>
+            <textarea id="project-edit-description" value={description} onChange={(e) => setDescription(e.target.value)} style={inputStyle} />
+          </div>
+          <button type="submit" style={buttonStyle}>Guardar cambios</button>
+        </form>
+      </Modal>
+
+      <Modal isOpen={createModalOpen} onClose={() => setCreateModalOpen(false)} title="Nueva épica">
+        <form onSubmit={handleCreateEpic}>
+          <div style={{ marginBottom: '12px' }}>
+            <label htmlFor="epic-name" style={labelStyle}>Nombre</label>
+            <input id="epic-name" type="text" value={epicName} onChange={(e) => setEpicName(e.target.value)} required style={inputStyle} />
+          </div>
+          <div style={{ marginBottom: '16px' }}>
+            <label htmlFor="epic-description" style={labelStyle}>Descripción</label>
+            <textarea id="epic-description" value={epicDescription} onChange={(e) => setEpicDescription(e.target.value)} style={inputStyle} />
+          </div>
+          <button type="submit" style={buttonStyle}>Crear</button>
+        </form>
+      </Modal>
+    </div>
+  )
+}
+
+export default ProjectDetail
