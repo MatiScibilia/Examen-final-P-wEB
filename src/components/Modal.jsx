@@ -1,7 +1,11 @@
+// Ventana modal genérica.
+// Props: isOpen (visible o no), onClose (cierra la ventana), title, children (contenido)
 function Modal({ isOpen, onClose, title, children }) {
+  // Si está cerrada no se renderiza nada
   if (!isOpen) return null
 
   return (
+    // Fondo oscuro que cubre la pantalla: al hacer click fuera de la ventana, se cierra
     <div
       onClick={onClose}
       style={{
@@ -18,6 +22,7 @@ function Modal({ isOpen, onClose, title, children }) {
         fontFamily: '"Segoe UI", Roboto, Helvetica, Arial, sans-serif',
       }}
     >
+      {/* stopPropagation evita que un click dentro de la ventana llegue al fondo y la cierre */}
       <div
         onClick={(e) => e.stopPropagation()}
         style={{
@@ -30,6 +35,7 @@ function Modal({ isOpen, onClose, title, children }) {
         }}
       >
         <h3 style={{ marginTop: 0, marginBottom: '16px' }}>{title}</h3>
+        {/* Contenido que recibe el modal (por ejemplo, un formulario) */}
         {children}
       </div>
     </div>

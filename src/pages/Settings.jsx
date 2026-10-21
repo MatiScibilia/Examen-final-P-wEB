@@ -1,10 +1,14 @@
+
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
+// Componente que muestra los datos del usuario y permite cerrar sesión.
 function Settings() {
+  // Obtiene los datos del usuario y la función para cerrar sesión desde el contexto.
   const { user, logout } = useAuth()
   const navigate = useNavigate()
 
+  // Pide confirmación, cierra la sesión y redirige al usuario al login.
   const handleLogout = () => {
     const confirmed = window.confirm('¿Seguro que querés cerrar sesión?')
     if (!confirmed) return
@@ -13,6 +17,7 @@ function Settings() {
     navigate('/login')
   }
 
+  // Estilo reutilizable para las filas donde se muestran los datos del perfil.
   const rowStyle = {
     display: 'flex',
     justifyContent: 'space-between',
@@ -22,6 +27,7 @@ function Settings() {
 
   return (
     <div style={{ fontFamily: '"Segoe UI", Roboto, Helvetica, Arial, sans-serif', maxWidth: '480px', margin: '0 auto' }}>
+      {/* Muestra el avatar con la inicial, el nombre completo y el nombre de usuario. */}
       <div style={{ textAlign: 'center', marginBottom: '24px' }}>
         <div
           style={{
@@ -46,6 +52,7 @@ function Settings() {
         <p style={{ margin: '4px 0 0', color: '#777' }}>{user ? user.username : ''}</p>
       </div>
 
+      {/* Presenta la información del usuario; si no hay datos, muestra un guion. */}
       <div>
         <div style={rowStyle}>
           <span style={{ color: '#777' }}>Nombre</span>
@@ -65,6 +72,7 @@ function Settings() {
         </div>
       </div>
 
+      {/* Botón que ejecuta la función para cerrar sesión. */}
       <button
         onClick={handleLogout}
         style={{

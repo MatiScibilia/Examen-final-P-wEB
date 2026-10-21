@@ -1,5 +1,9 @@
+// Tarjeta reutilizable para mostrar un elemento de una lista.
+// Props: icon, title, description (contenido), onClick (abrir el detalle),
+// onDelete (opcional: si se recibe, muestra el botón de eliminar)
 function Card({ icon, title, description, onClick, onDelete }) {
   return (
+    // Contenedor; la sombra cambia al pasar el mouse (efecto hover)
     <div
       style={{
         display: 'flex',
@@ -16,6 +20,8 @@ function Card({ icon, title, description, onClick, onDelete }) {
       onMouseEnter={(e) => (e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.08)')}
       onMouseLeave={(e) => (e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.04)')}
     >
+      {/* Zona clickeable: ícono, título y descripción. Está separada del botón
+          de eliminar para que cada uno dispare su propia acción */}
       <div onClick={onClick} style={{ display: 'flex', alignItems: 'center', gap: '14px', cursor: 'pointer', flex: 1 }}>
         <div
           style={{
@@ -38,6 +44,7 @@ function Card({ icon, title, description, onClick, onDelete }) {
         </div>
       </div>
 
+      {/* El botón de eliminar solo se muestra si se recibió onDelete */}
       {onDelete && (
         <button
           onClick={onDelete}

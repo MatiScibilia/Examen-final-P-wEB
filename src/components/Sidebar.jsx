@@ -1,17 +1,21 @@
 import { NavLink } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
+// Menú lateral. Props: isOpen (visible o no), onClose (cierra el menú)
 function Sidebar({ isOpen, onClose }) {
   const { user } = useAuth()
 
+  // Si está cerrado no se renderiza nada
   if (!isOpen) return null
 
+  // Enlaces de navegación principales
   const links = [
     { to: '/home', label: 'Home', icon: '🏠' },
     { to: '/my-projects', label: 'My Projects', icon: '📁' },
     { to: '/my-stories', label: 'My Stories', icon: '📝' },
   ]
 
+  // NavLink entrega isActive: true si el enlace corresponde a la ruta actual
   const linkStyle = ({ isActive }) => ({
     display: 'flex',
     alignItems: 'center',
@@ -25,6 +29,7 @@ function Sidebar({ isOpen, onClose }) {
   })
 
   return (
+    // Fondo oscuro que cubre la pantalla: al hacer click fuera del menú, se cierra
     <div
       onClick={onClose}
       style={{
@@ -37,6 +42,7 @@ function Sidebar({ isOpen, onClose }) {
         zIndex: 90,
       }}
     >
+      {/* stopPropagation evita que un click dentro del menú llegue al fondo y lo cierre */}
       <aside
         onClick={(e) => e.stopPropagation()}
         style={{
@@ -54,6 +60,7 @@ function Sidebar({ isOpen, onClose }) {
           boxSizing: 'border-box',
         }}
       >
+        {/* Marca de la aplicación */}
         <div
           style={{
             display: 'flex',
@@ -67,6 +74,7 @@ function Sidebar({ isOpen, onClose }) {
           <span style={{ fontWeight: 'bold', fontSize: '18px' }}>Task Tracker</span>
         </div>
 
+        {/* Enlaces de navegación; al elegir uno, el menú se cierra */}
         <nav style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '4px' }}>
           {links.map((link) => (
             <NavLink key={link.to} to={link.to} style={linkStyle} onClick={onClose}>
@@ -76,6 +84,7 @@ function Sidebar({ isOpen, onClose }) {
           ))}
         </nav>
 
+        {/* Acceso al perfil del usuario (Settings), fijo al pie del menú */}
         <NavLink
           to="/settings"
           onClick={onClose}
@@ -89,6 +98,7 @@ function Sidebar({ isOpen, onClose }) {
             color: isActive ? '#4f46e5' : '#333',
           })}
         >
+          {/* Avatar con la inicial del nombre */}
           <div
             style={{
               width: '32px',

@@ -1,22 +1,30 @@
+
+/* Importa las herramientas para navegar, obtener el usuario y acceder a los datos de prueba. */
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { mockProjects, mockStories } from '../services/mocks'
 
+// Componente que muestra la página principal con resúmenes y accesos a los proyectos.
 function Home() {
+
+  // Obtiene el usuario autenticado y la función para navegar entre páginas.
   const { user } = useAuth()
   const navigate = useNavigate()
 
+  // Calcula el total de proyectos, stories pendientes, completadas y los tres proyectos recientes.
   const totalProjects = mockProjects.length
   const pendingStories = mockStories.filter((s) => s.status !== 'done').length
   const doneStories = mockStories.filter((s) => s.status === 'done').length
   const recentProjects = mockProjects.slice(0, 3)
 
+  // Guarda los datos y colores de las tarjetas estadísticas que se mostrarán en pantalla.
   const stats = [
     { label: 'Proyectos', value: totalProjects, color: '#4f46e5' },
     { label: 'Stories pendientes', value: pendingStories, color: '#f59e0b' },
     { label: 'Stories completadas', value: doneStories, color: '#16a34a' },
   ]
 
+  // Define los cuatro niveles de organización del trabajo con sus iconos, títulos y descripciones.
   const steps = [
     { icon: '📁', title: 'Proyecto', text: 'El nivel más alto. Agrupa todo el trabajo de una iniciativa.' },
     { icon: '⭐', title: 'Épica', text: 'Un gran bloque de trabajo dentro de un proyecto.' },
@@ -24,12 +32,14 @@ function Home() {
     { icon: '✅', title: 'Tarea', text: 'El paso más chico: lo que efectivamente se ejecuta.' },
   ]
 
+  // Guarda los consejos que se mostrarán al usuario en la página principal.
   const tips = [
     'Podés crear, editar y eliminar proyectos, épicas, stories y tareas desde cada pantalla de detalle.',
     'Una épica o story no se puede eliminar si todavía tiene contenido adentro (stories o tareas).',
     'Desde "My Stories" podés ver todas tus stories juntas, sin entrar proyecto por proyecto.',
   ]
 
+  // Renderiza toda la página principal, organizando sus secciones verticalmente.
   return (
     <div
       style={{
@@ -41,6 +51,7 @@ function Home() {
         fontFamily: '"Segoe UI", Roboto, Helvetica, Arial, sans-serif',
       }}
     >
+      {/* Muestra un saludo personalizado, una descripción y un botón para ir a los proyectos. */}
       <section
         style={{
           background: 'linear-gradient(135deg, #4f46e5, #7c3aed)',
@@ -82,6 +93,7 @@ function Home() {
         </button>
       </section>
 
+      {/* Recorre stats y muestra una tarjeta por cada estadística calculada. */}
       <section>
         <h2 style={{ fontSize: '18px', marginBottom: '12px' }}>Resumen</h2>
         <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
@@ -105,6 +117,7 @@ function Home() {
         </div>
       </section>
 
+      {/* Muestra los tres proyectos recientes y permite entrar al detalle de cada uno. */}
       <section>
         <h2 style={{ fontSize: '18px', marginBottom: '12px' }}>Proyectos recientes</h2>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
@@ -132,6 +145,7 @@ function Home() {
         </div>
       </section>
 
+      {/* Explica la jerarquía del trabajo mostrando los elementos definidos en steps. */}
       <section>
         <h2 style={{ fontSize: '18px', marginBottom: '8px', textAlign: 'center' }}>
           ¿Cómo se organiza el trabajo?
@@ -166,6 +180,7 @@ function Home() {
         </div>
       </section>
 
+      {/* Recorre el array tips y muestra cada consejo en una tarjeta con un icono. */}
       <section>
         <h2 style={{ fontSize: '18px', marginBottom: '12px' }}>Tips</h2>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
@@ -191,4 +206,5 @@ function Home() {
   )
 }
 
+// Exporta el componente para poder utilizarlo en las rutas de la aplicación.
 export default Home

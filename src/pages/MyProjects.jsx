@@ -1,10 +1,13 @@
+
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Card from '../components/Card'
 import Modal from '../components/Modal'
 import { mockProjects, mockEpics } from '../services/mocks'
 
+// Componente que muestra los proyectos y permite crearlos, abrirlos o eliminarlos.
 function MyProjects() {
+  // Estados para guardar los proyectos, controlar la carga y manejar el modal y sus campos.
   const [projects, setProjects] = useState([])
   const [loading, setLoading] = useState(true)
   const [modalOpen, setModalOpen] = useState(false)
@@ -12,6 +15,7 @@ function MyProjects() {
   const [description, setDescription] = useState('')
   const navigate = useNavigate()
 
+  // Simula una carga de datos: espera un segundo y luego muestra los proyectos.
   useEffect(() => {
     setTimeout(() => {
       setProjects(mockProjects)
@@ -19,6 +23,7 @@ function MyProjects() {
     }, 1000)
   }, [])
 
+  // Crea un proyecto nuevo, lo agrega a la lista y limpia y cierra el formulario.
   const handleCreate = (e) => {
     e.preventDefault()
     const newProject = { _id: String(Date.now()), name, description, icon: '📁' }
@@ -28,6 +33,7 @@ function MyProjects() {
     setModalOpen(false)
   }
 
+  // Evita eliminar proyectos con épicas y pide confirmación antes de borrar los demás.
   const handleDelete = (project) => {
     const hasEpics = mockEpics.some((e) => e.project === project._id)
     if (hasEpics) {
@@ -41,6 +47,7 @@ function MyProjects() {
 
   return (
     <div style={{ fontFamily: '"Segoe UI", Roboto, Helvetica, Arial, sans-serif' }}>
+      {/* Encabezado de la página con el título y el botón para abrir el formulario. */}
       <div style={{ textAlign: 'center', marginBottom: '24px' }}>
         <h1 style={{ margin: 0, fontSize: '26px' }}>My Projects</h1>
         <p style={{ margin: '6px 0 16px', color: '#777' }}>Todos tus proyectos en un solo lugar.</p>
@@ -60,6 +67,7 @@ function MyProjects() {
         </button>
       </div>
 
+      {/* Muestra el estado de carga, un mensaje si no hay proyectos o la lista de tarjetas. */}
       {loading ? (
         <p style={{ color: '#777' }}>Cargando proyectos...</p>
       ) : projects.length === 0 ? (
@@ -80,6 +88,7 @@ function MyProjects() {
         </ul>
       )}
 
+      {/* Modal con el formulario para ingresar el nombre y la descripción del proyecto. */}
       <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)} title="Nuevo proyecto">
         <form onSubmit={handleCreate}>
           <div style={{ marginBottom: '12px' }}>
